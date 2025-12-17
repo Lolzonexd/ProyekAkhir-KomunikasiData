@@ -1,10 +1,11 @@
 import socket
 import os
+from datetime import datetime
 
-SERVER_IP = "127.0.0.1"
+SERVER_IP = "192.168.1.10"
 PORT = 8888
-BUFFER_SIZE = 1024
-FILENAME = "gambar.png"  # file ASLI di server
+BUFFER_SIZE = 4096
+FILENAME = "gambar.png"
 
 try:
     # Cek apakah file ada
@@ -13,6 +14,11 @@ try:
         exit()
 
     file_size = os.path.getsize(FILENAME)
+
+    print("=== SERVER FILE TRANSFER ===")
+    print(f"Waktu mulai : {datetime.now()}")
+    print(f"File : {FILENAME}")
+    print(f"Ukuran : {file_size} byte")
 
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((SERVER_IP, PORT))
@@ -23,8 +29,9 @@ try:
     print(f"Terhubung dengan {addr}")
 
     # Kirim metadata (nama file + ukuran file)
-    metadata = f"{FILENAME}|{file_size}"
-    conn.send(metadata.encode())
+    sent_size = 0
+    metadata = f"{FILENAME}|{file_size}\n"
+    conn.sendall(metadata.encode())
 
     # Kirim isi file per buffer
     with open(FILENAME, "rb") as f:
@@ -33,11 +40,21 @@ try:
             if not data:
                 break
             conn.sendall(data)
+            sent_size += len(data)
 
-    print("File berhasil dikirim.")
+            percent = (sent_size / file_size) * 100
+            print(f"\rProgress kirim: {percent:.2f}%", end="")
+
+    print("\nFile berhasil dikirim.")
+    print(f"Waktu selesai : {datetime.now()}")
 
     conn.close()
     server.close()
 
-except Exception as e:
-    print("Terjadi kesalahan:", e)
+except FileNotFoundError as e:
+    print("Error:", e)
+except socket.error as e:
+    print("Socket error:", e)
+
+# except Exception as e:
+#     print("Terjadi kesalahan:", e)
