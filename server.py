@@ -1,10 +1,10 @@
 import socket
 import os
 
-SERVER_IP = "127.0.0.1"
+SERVER_IP = "192.168.1.10"
 PORT = 8888
-BUFFER_SIZE = 1024
-FILENAME = "gambar.png"  # file ASLI di server
+BUFFER_SIZE = 4096
+FILENAME = "gambar.png"
 
 try:
     # Cek apakah file ada

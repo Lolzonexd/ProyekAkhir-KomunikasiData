@@ -1,9 +1,9 @@
 import socket
 import os
 
-SERVER_IP = "127.0.0.1"
+SERVER_IP = "192.168.1.10"
 PORT = 8888
-BUFFER_SIZE = 1024
+BUFFER_SIZE = 4096
 
 try:
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
