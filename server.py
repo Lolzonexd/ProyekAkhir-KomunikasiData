@@ -8,23 +8,25 @@ BUFFER_SIZE = 4096
 FILENAME = "gambar.png"
 
 try:
-    # Cek apakah file ada
+    # Cek file
     if not os.path.exists(FILENAME):
         print("Error: File tidak ditemukan!")
         exit()
 
+    # Informasi File
     file_size = os.path.getsize(FILENAME)
-
     print("=== SERVER FILE TRANSFER ===")
     print(f"Waktu mulai : {datetime.now()}")
     print(f"File : {FILENAME}")
     print(f"Ukuran : {file_size} byte")
 
+    # Setup Socket
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((SERVER_IP, PORT))
     server.listen(1)
-
     print("Menunggu koneksi dari client...")
+
+    # Terima Koneksi
     conn, addr = server.accept()
     print(f"Terhubung dengan {addr}")
 
@@ -42,15 +44,19 @@ try:
             conn.sendall(data)
             sent_size += len(data)
 
+            # Progress Bar
             percent = (sent_size / file_size) * 100
             print(f"\rProgress kirim: {percent:.2f}%", end="")
 
+    # Status Akhir
     print("\nFile berhasil dikirim.")
     print(f"Waktu selesai : {datetime.now()}")
 
+    # Tutup Socket
     conn.close()
     server.close()
 
+# Tangkap Error
 except FileNotFoundError as e:
     print("Error:", e)
 except socket.error as e:
